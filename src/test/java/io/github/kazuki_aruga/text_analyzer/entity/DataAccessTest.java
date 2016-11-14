@@ -2,6 +2,8 @@ package io.github.kazuki_aruga.text_analyzer.entity;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -21,6 +23,17 @@ public class DataAccessTest {
 
 		target = new DataAccess(DriverManager.getConnection("jdbc:mysql://localhost:3306/text-analyzer",
 				"text-analyzer", "text-analyzer"));
+
+		target.getConnection().setAutoCommit(false);
+	}
+
+	@After
+	public void tearDown() throws SQLException {
+
+		target.getConnection().rollback();
+
+		target.getConnection().close();
+		target = null;
 	}
 
 	@Test
@@ -40,11 +53,31 @@ public class DataAccessTest {
 
 		vocab.setProto("テスト");
 		vocab.setPos("テスト");
-		vocab.setPos1("テスト");
-		vocab.setPos2("テスト");
-		vocab.setPos3("テスト");
+		vocab.setPos1("テスト1");
+		vocab.setPos2("テスト2");
+		vocab.setPos3("テスト3");
 
 		Assert.assertFalse(target.existsVocab(vocab));
+	}
+
+	@Test
+	public void testSaveVocab() throws SQLException {
+
+		final Vocab vocab = new Vocab();
+
+		vocab.setProto("テスト");
+		vocab.setPos("テスト");
+		vocab.setPos1("テスト1");
+		vocab.setPos2("テスト2");
+		vocab.setPos3("テスト3");
+		vocab.setConj("テスト");
+		vocab.setType("テスト");
+		vocab.setFuri("テスト");
+		vocab.setPronun("テスト");
+
+		target.saveVocab(vocab);
+
+		Assert.assertNotNull(vocab.getVocabId());
 	}
 
 	@Test
@@ -62,11 +95,39 @@ public class DataAccessTest {
 		Assert.assertFalse(target.existsReport(report));
 	}
 
-	@After
-	public void tearDown() throws SQLException {
+	@Test
+	public void testMergeReport() throws SQLException {
 
-		target.getConnection().close();
-		target = null;
+		final Company company = new Company();
+		company.setCompCode("9999");
+		company.setCompName("テスト");
+
+		final Report report = new Report();
+		report.setCompany(company);
+		report.setYear(2000);
+
+		final List<Word> issues = new ArrayList<>();
+
+		final Word word = new Word();
+		word.setSurface("テスト");
+		final Vocab vocab = new Vocab();
+		vocab.setProto("テスト");
+		vocab.setPos("テスト");
+		vocab.setPos1("テスト");
+		vocab.setPos2("テスト");
+		vocab.setPos3("テスト");
+		vocab.setConj("テスト");
+		vocab.setType("テスト");
+		vocab.setFuri("テスト");
+		vocab.setPronun("テスト");
+		word.setVocab(vocab);
+
+		issues.add(word);
+
+		report.setIssues(issues);
+		report.setRd(issues);
+
+		target.mergeReport(report);
 	}
 
 }
