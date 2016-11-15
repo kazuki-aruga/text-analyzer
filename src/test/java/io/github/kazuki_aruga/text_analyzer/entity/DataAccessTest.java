@@ -21,8 +21,9 @@ public class DataAccessTest {
 	@Before
 	public void setUp() throws SQLException {
 
-		target = new DataAccess(DriverManager.getConnection("jdbc:mysql://localhost:3306/text-analyzer",
-				"text-analyzer", "text-analyzer"));
+		target = new DataAccess(
+				DriverManager.getConnection("jdbc:mysql://localhost:3306/text-analyzer?autoReconnect=true&useSSL=false",
+						"text-analyzer", "text-analyzer"));
 
 		target.getConnection().setAutoCommit(false);
 	}
