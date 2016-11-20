@@ -13,6 +13,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,6 +29,8 @@ import io.github.kazuki_aruga.text_analyzer.entity.Report;
  * @author k-aruga
  */
 public class ReportAnalyzer {
+
+	private static final Log log = LogFactory.getLog(ReportAnalyzer.class);
 
 	/**
 	 * 有価証券報告書のファイル名。
@@ -72,21 +76,26 @@ public class ReportAnalyzer {
 	public Report analyze(boolean jisa, String compCode, String pathname)
 			throws EncryptedDocumentException, InvalidFormatException, IOException {
 
+		log.info("有価証券報告書ファイルの解析を開始します：" + pathname);
+
 		final File file = new File(pathname);
 		if (!file.exists() || !file.isFile()) {
 
+			log.info("指定されたファイルが存在しません。");
 			return null;
 		}
 
 		final Matcher matcher = pattern.matcher(file.getName());
 		if (!matcher.find()) {
 
+			log.info("有価証券報告書ではありません。");
 			return null;
 		}
 
 		final int year = getYear(matcher.group(2));
 		if (year == 0) {
 
+			log.info("年度が特定できません。");
 			return null;
 		}
 
@@ -98,6 +107,7 @@ public class ReportAnalyzer {
 
 			company.setCompName(FormParser.getCompanyName(book));
 			company.setCompCode(compCode);
+			company.setJisa(jisa);
 
 			final Report report = new Report();
 

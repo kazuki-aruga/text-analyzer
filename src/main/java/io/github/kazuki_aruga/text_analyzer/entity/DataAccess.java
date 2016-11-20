@@ -9,12 +9,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * データアクセスクラス。
  * 
  * @author kazuki
  */
 public class DataAccess {
+
+	private static final Log log = LogFactory.getLog(DataAccess.class);
 
 	/**
 	 * DB接続。
@@ -112,6 +117,8 @@ public class DataAccess {
 
 	public void saveCompany(Company company) throws SQLException {
 
+		log.info("企業を登録します：comp_code=" + company.getCompCode());
+
 		try (PreparedStatement stmt = conn
 				.prepareStatement("insert into comp (comp_code, comp_name, jisa) values (?, ?, ?)")) {
 
@@ -120,6 +127,31 @@ public class DataAccess {
 			stmt.setBoolean(3, company.isJisa());
 
 			stmt.executeUpdate();
+		}
+	}
+
+	public void modifyCompany(Company company) throws SQLException {
+
+		try (PreparedStatement stmt = conn
+				.prepareStatement("update comp set comp_name = ?, jisa = ? where comp_code = ?")) {
+
+			stmt.setString(1, company.getCompName());
+			stmt.setBoolean(2, company.isJisa());
+			stmt.setString(3, company.getCompCode());
+
+			stmt.executeUpdate();
+		}
+	}
+
+	private void mergeCompany(Company company) throws SQLException {
+
+		if (existsCompany(company)) {
+
+			modifyCompany(company);
+
+		} else {
+
+			saveCompany(company);
 		}
 	}
 
@@ -185,6 +217,8 @@ public class DataAccess {
 
 	public void saveVocab(Vocab vocab) throws SQLException {
 
+		log.info("語彙を登録します");
+
 		try (PreparedStatement stmt = conn.prepareStatement(
 				"insert into vocab (proto, pos, pos1, pos2, pos3, conj, type, furi, pronun) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 				Statement.RETURN_GENERATED_KEYS)) {
@@ -209,6 +243,8 @@ public class DataAccess {
 				}
 			}
 		}
+
+		log.info("語彙の登録が完了しました：vocab_id=" + vocab.getVocabId());
 	}
 
 	public boolean existsReport(Report report) throws SQLException {
@@ -236,22 +272,28 @@ public class DataAccess {
 		return true;
 	}
 
-	public void mergeReport(Report report) throws SQLException {
+	public boolean mergeReport(Report report) throws SQLException {
 
-		if (!existsCompany(report.getCompany())) {
+		log.info("有価証券報告書のレコード登録処理を開始します。");
 
-			saveCompany(report.getCompany());
-			saveReport(report);
+		final Company company = report.getCompany();
 
-		} else {
+		mergeCompany(company);
 
-			if (!existsReport(report)) {
+		if (existsReport(report)) {
 
-				saveReport(report);
-			}
+			log.warn("すでに有価証券報告書レコードが存在するため、有価証券報告書のレコード登録処理を中断します：comp_code" + company.getCompCode() + ",year="
+					+ report.getYear());
+
+			return false;
 		}
 
+		saveReport(report);
 		mergeReportWord(report);
+
+		log.info("有価証券報告書のレコード登録処理が完了しました。");
+
+		return true;
 	}
 
 	public void saveReport(Report report) throws SQLException {

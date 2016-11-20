@@ -62,7 +62,14 @@ public class FormParser {
 
 				if (found) {
 
-					return getValue(cell);
+					final String value = getValue(cell);
+					if (value == null) {
+
+						log.warn("会社名が見つかりませんでした。");
+						return "";
+					}
+
+					return value;
 				}
 
 				if ("【会社名】".equals(getValue(cell))) {
@@ -72,7 +79,8 @@ public class FormParser {
 			}
 		}
 
-		return null;
+		log.warn("会社名が見つかりませんでした。");
+		return "";
 	}
 
 	private static Sheet findCover(Workbook workbook) {
@@ -100,7 +108,7 @@ public class FormParser {
 		final List<Sheet> sheets = findSheets(workbook);
 		if (sheets.isEmpty()) {
 
-			log.warn("「事業の状況」シートが存在しません。");
+			log.warn("「事業の状況」シートが見つかりません。");
 			return null;
 		}
 
@@ -148,17 +156,13 @@ public class FormParser {
 			}
 		}
 
-		if (issues.isEmpty())
+		if (issues.isEmpty()) {
 
-		{
-
-			log.warn("３【対処すべき課題】が見つかりませんでした");
+			log.error("３【対処すべき課題】が見つかりません。");
 		}
-		if (rd.isEmpty())
+		if (rd.isEmpty()) {
 
-		{
-
-			log.warn("６【研究開発活動】が見つかりませんでした");
+			log.error("６【研究開発活動】が見つかりません。");
 		}
 
 		// 結果を生成して返却する
