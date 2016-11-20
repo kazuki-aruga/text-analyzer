@@ -14,16 +14,25 @@ import net.moraleboost.mecab.Node;
 import net.moraleboost.mecab.impl.StandardTagger;
 
 /**
+ * 形態素解析を行うクラス。
+ * 
  * @author k-aruga
- *
  */
-public final class MorphologicalAnalyzer {
+public class MorphologicalAnalyzer implements AutoCloseable {
+
+	/**
+	 * Taggerオブジェクト。
+	 */
+	private final StandardTagger engine;
 
 	/**
 	 * 
 	 */
-	private MorphologicalAnalyzer() {
+	public MorphologicalAnalyzer() {
 
+		// Taggerを構築。
+		// 引数には、MeCabのcreateTagger()関数に与える引数を与える。
+		engine = new StandardTagger("");
 	}
 
 	/**
@@ -33,60 +42,47 @@ public final class MorphologicalAnalyzer {
 	 *            文のリスト。
 	 * @return 単語のリスト。
 	 */
-	public static List<Word> analyze(List<String> sentences) {
+	public List<Word> analyze(List<String> sentences) {
 
-		// Taggerを構築。
-		// 引数には、MeCabのcreateTagger()関数に与える引数を与える。
-		final StandardTagger engine = new StandardTagger("");
+		// Lattice（形態素解析に必要な実行時情報が格納されるオブジェクト）を構築
+		final Lattice lattice = engine.createLattice();
 
 		try {
 
-			// Lattice（形態素解析に必要な実行時情報が格納されるオブジェクト）を構築
-			final Lattice lattice = engine.createLattice();
+			final List<Word> words = new ArrayList<>();
 
-			try {
+			for (String sentence : sentences) {
 
-				final List<Word> words = new ArrayList<>();
+				// 解析対象文字列をセット
+				lattice.setSentence(sentence);
 
-				for (String sentence : sentences) {
+				// tagger.parse()を呼び出して、文字列を形態素解析する。
+				engine.parse(lattice);
 
-					// 解析対象文字列をセット
-					lattice.setSentence(sentence);
+				// 一つずつ形態素をたどりながら、表層形と素性を出力
+				Node node = lattice.bosNode().next();
 
-					// tagger.parse()を呼び出して、文字列を形態素解析する。
-					engine.parse(lattice);
+				while (node != null && node.stat() != Node.TYPE_EOS_NODE) {
 
-					// 一つずつ形態素をたどりながら、表層形と素性を出力
-					Node node = lattice.bosNode().next();
+					final Word word = new Word();
 
-					while (node != null && node.stat() != Node.TYPE_EOS_NODE) {
+					word.setSurface(node.surface());
+					word.setVocab(parseFeature(node.feature()));
 
-						final Word word = new Word();
+					words.add(word);
 
-						word.setSurface(node.surface());
-						word.setVocab(parseFeature(node.feature()));
-
-						words.add(word);
-
-						node = node.next();
-					}
-
+					node = node.next();
 				}
 
-				return words;
-
-			} finally {
-
-				// latticeを破壊
-				lattice.destroy();
 			}
+
+			return words;
 
 		} finally {
 
-			// taggerを破壊
-			engine.destroy();
+			// latticeを破壊
+			lattice.destroy();
 		}
-
 	}
 
 	/**
@@ -116,6 +112,15 @@ public final class MorphologicalAnalyzer {
 		vocab.setPronun(features[8]);
 
 		return vocab;
+	}
+
+	/**
+	 * Taggerオブジェクトを破棄する。
+	 */
+	@Override
+	public void close() {
+
+		engine.destroy();
 	}
 
 }

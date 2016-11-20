@@ -25,6 +25,11 @@ public class Company implements Serializable {
 	 */
 	private String compName;
 
+	/**
+	 * JISAに加入しているかどうか。
+	 */
+	private boolean jisa;
+
 	public String getCompCode() {
 		return compCode;
 	}
@@ -39,6 +44,14 @@ public class Company implements Serializable {
 
 	public void setCompName(String compName) {
 		this.compName = compName;
+	}
+
+	public boolean isJisa() {
+		return jisa;
+	}
+
+	public void setJisa(boolean jisa) {
+		this.jisa = jisa;
 	}
 
 }

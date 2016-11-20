@@ -28,13 +28,38 @@ import io.github.kazuki_aruga.text_analyzer.entity.Report;
  */
 public class ReportAnalyzer {
 
+	/**
+	 * 有価証券報告書のファイル名。
+	 */
 	private static final Pattern pattern = Pattern.compile(
 			"^[^_]+_有価証券報告書第[0-9]{1,2}期（(平成[0-9]{1,2}年[0-9]{1,2}月[0-9]{1,2}日)-(平成[0-9]{1,2}年[0-9]{1,2}月[0-9]{1,2}日)）[.]xls$");
 
+	/**
+	 * 和暦のフォーマット。
+	 */
 	private static final DateFormat japaneseFormat = new SimpleDateFormat("GGGGy年M月d日", new Locale("ja", "JP", "JP"));
 
 	/**
+	 * 形態素解析器。
+	 */
+	private final MorphologicalAnalyzer ma;
+
+	/**
+	 * 形態素解析器をもとに有価証券報告書解析クラスのインスタンスを生成する。
 	 * 
+	 * @param ma
+	 *            形態素解析器。
+	 */
+	public ReportAnalyzer(MorphologicalAnalyzer ma) {
+
+		this.ma = ma;
+	}
+
+	/**
+	 * 有価証券報告書を解析し、有価証券報告書オブジェクトを返す。
+	 * 
+	 * @param jisa
+	 *            JISAに加入しているかどうか。
 	 * @param compCode
 	 *            企業コード。
 	 * @param pathname
@@ -44,7 +69,7 @@ public class ReportAnalyzer {
 	 * @throws InvalidFormatException
 	 * @throws EncryptedDocumentException
 	 */
-	public static Report analyze(String compCode, String pathname)
+	public Report analyze(boolean jisa, String compCode, String pathname)
 			throws EncryptedDocumentException, InvalidFormatException, IOException {
 
 		final File file = new File(pathname);
@@ -78,17 +103,19 @@ public class ReportAnalyzer {
 
 			report.setCompany(company);
 			report.setYear(year);
-			report.setIssues(MorphologicalAnalyzer.analyze(bs.getIssues()));
-			report.setRd(MorphologicalAnalyzer.analyze(bs.getRd()));
+			report.setIssues(ma.analyze(bs.getIssues()));
+			report.setRd(ma.analyze(bs.getRd()));
 
 			return report;
 		}
 	}
 
 	/**
+	 * 和暦から西暦の年を取得する。
 	 * 
 	 * @param gdate
-	 * @return
+	 *            和暦。
+	 * @return 西暦の年。
 	 */
 	private static int getYear(String gdate) {
 

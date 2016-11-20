@@ -10,20 +10,56 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
+ * データアクセスクラス。
+ * 
  * @author kazuki
  */
 public class DataAccess {
 
-	private Connection conn;
+	/**
+	 * DB接続。
+	 */
+	private final Connection conn;
 
+	/**
+	 * DB接続をもとに、データアクセスクラスのインスタンスを生成する。
+	 * 
+	 * @param conn
+	 *            DB接続。
+	 */
 	public DataAccess(Connection conn) {
 
 		this.conn = conn;
 	}
 
-	public Connection getConnection() {
+	/**
+	 * トランザクションを開始する。
+	 * 
+	 * @throws SQLException
+	 */
+	public void beginTransaction() throws SQLException {
 
-		return conn;
+		conn.setAutoCommit(false);
+	}
+
+	/**
+	 * トランザクションをコミットする。
+	 * 
+	 * @throws SQLException
+	 */
+	public void commit() throws SQLException {
+
+		conn.commit();
+	}
+
+	/**
+	 * トランザクションをロールバックする。
+	 * 
+	 * @throws SQLException
+	 */
+	public void rollback() throws SQLException {
+
+		conn.rollback();
 	}
 
 	public boolean existsCompany(Company company) throws SQLException {
@@ -52,7 +88,7 @@ public class DataAccess {
 	public Company findCompany(String compCode) throws SQLException {
 
 		try (PreparedStatement stmt = conn
-				.prepareStatement("select comp_code, comp_name from comp where comp_code = ?")) {
+				.prepareStatement("select comp_code, comp_name, jisa from comp where comp_code = ?")) {
 
 			stmt.setString(1, compCode);
 
@@ -67,6 +103,7 @@ public class DataAccess {
 
 				comp.setCompCode(rs.getString(1));
 				comp.setCompName(rs.getString(2));
+				comp.setJisa(rs.getBoolean(3));
 
 				return comp;
 			}
@@ -75,10 +112,12 @@ public class DataAccess {
 
 	public void saveCompany(Company company) throws SQLException {
 
-		try (PreparedStatement stmt = conn.prepareStatement("insert into comp (comp_code, comp_name) values (?, ?)")) {
+		try (PreparedStatement stmt = conn
+				.prepareStatement("insert into comp (comp_code, comp_name, jisa) values (?, ?, ?)")) {
 
 			stmt.setString(1, company.getCompCode());
 			stmt.setString(2, company.getCompName());
+			stmt.setBoolean(3, company.isJisa());
 
 			stmt.executeUpdate();
 		}

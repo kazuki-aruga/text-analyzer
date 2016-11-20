@@ -1,40 +1,49 @@
 package io.github.kazuki_aruga.text_analyzer.entity;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class DataAccessTest {
 
+	private static Connection conn;
+
 	private DataAccess target;
 
-	/**
-	 * 
-	 * @throws SQLException
-	 */
+	@BeforeClass
+	public static void beforeClass() throws SQLException {
+
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/text-analyzer?autoReconnect=true&useSSL=false",
+				"text-analyzer", "text-analyzer");
+	}
+
 	@Before
 	public void setUp() throws SQLException {
 
-		target = new DataAccess(
-				DriverManager.getConnection("jdbc:mysql://localhost:3306/text-analyzer?autoReconnect=true&useSSL=false",
-						"text-analyzer", "text-analyzer"));
-
-		target.getConnection().setAutoCommit(false);
+		target = new DataAccess(conn);
+		target.beginTransaction();
 	}
 
 	@After
 	public void tearDown() throws SQLException {
 
-		target.getConnection().rollback();
-
-		target.getConnection().close();
+		target.rollback();
 		target = null;
+	}
+
+	@AfterClass
+	public static void afterClass() throws SQLException {
+
+		conn.close();
 	}
 
 	@Test

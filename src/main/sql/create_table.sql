@@ -1,6 +1,7 @@
 CREATE TABLE `comp` (
   `comp_code` varchar(4) NOT NULL COMMENT '企業コード',
   `comp_name` varchar(256) NOT NULL COMMENT '企業名',
+  `jisa` bit(1) NOT NULL COMMENT 'JISAに加入しているかどうか',
   PRIMARY KEY (`comp_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='企業マスター';
 CREATE TABLE `vocab` (
