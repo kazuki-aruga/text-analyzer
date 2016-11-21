@@ -30,13 +30,13 @@ public class FormParser {
 	 * 事業の状況のセクション。
 	 */
 	private static Pattern[] bsSections = new Pattern[] { //
-			Pattern.compile("^[０-９].*【業績等の概要】$"), //
-			Pattern.compile("^[０-９].*【生産、受注及び販売の状況】$"), //
-			Pattern.compile("^[０-９].*【対処すべき課題】$"), //
-			Pattern.compile("^[０-９].*【事業等のリスク】$"), //
-			Pattern.compile("^[０-９].*【経営上の重要な契約等】$"), //
-			Pattern.compile("^[０-９].*【研究開発活動】$"), //
-			Pattern.compile("^[０-９].*【財政状態、経営成績及びキャッシュ・フローの状況の分析】$"), //
+			Pattern.compile("^.*【業績等の概要】$"), //
+			Pattern.compile("^.*【生産.*受注及び販売の状況】$"), //
+			Pattern.compile("^.*【対処すべき課題】$"), //
+			Pattern.compile("^.*【事業等のリスク】$"), //
+			Pattern.compile("^.*【経営上の重要な契約等】$"), //
+			Pattern.compile("^.*【研究開発活動】$"), //
+			Pattern.compile("^.*【財政状態.*経営成績及びキャッシュ.*フローの状況の分析】$"), //
 	};
 
 	/**
