@@ -24,19 +24,27 @@ public class FormParser {
 	/**
 	 * 事業の状況を記載したシート名。
 	 */
-	private static String[] bsSheetNames = { "事業の状況", "業績等の概要", "生産、受注及び販売の状況", "対処すべき課題", "経営上の重要な契約等", "研究開発活動" };
+	private static Pattern[] bsSheetNames = { //
+			Pattern.compile("事業の状況"), //
+			Pattern.compile("業績等の概要"), //
+			Pattern.compile("生産、受注及び販売の状況"), //
+			Pattern.compile("対処すべき課題"), //
+			Pattern.compile("事業等のリスク"), //
+			Pattern.compile("経営上の重要な契約等"), //
+			Pattern.compile("研究開発活動"), //
+	};
 
 	/**
 	 * 事業の状況のセクション。
 	 */
 	private static Pattern[] bsSections = new Pattern[] { //
 			Pattern.compile("^.*【業績等の概要】$"), //
-			Pattern.compile("^.*【生産.*受注及び販売の状況】$"), //
+			Pattern.compile("^.*【生産.*受注[及び|および]販売の状況】$"), //
 			Pattern.compile("^.*【対処すべき課題】$"), //
 			Pattern.compile("^.*【事業等のリスク】$"), //
 			Pattern.compile("^.*【経営上の重要な契約等】$"), //
 			Pattern.compile("^.*【研究開発活動】$"), //
-			Pattern.compile("^.*【財政状態.*経営成績及びキャッシュ.*フローの状況の分析】$"), //
+			Pattern.compile("^.*【財政状態.*経営成績[及び|および]キャッシュ.*フローの状況の分析】$"), //
 	};
 
 	/**
@@ -186,13 +194,17 @@ public class FormParser {
 
 		final List<Sheet> result = new ArrayList<>();
 
-		for (String sheetName : bsSheetNames) {
+		for (Pattern sheetNamePattern : bsSheetNames) {
 
-			// 事業の状況シートが存在するか確認する
-			final int sheetIndex = workbook.getSheetIndex(sheetName);
-			if (0 <= sheetIndex) {
+			for (Sheet sheet : workbook) {
 
-				result.add(workbook.getSheetAt(sheetIndex));
+				final String sheetName = sheet.getSheetName();
+
+				if (sheetNamePattern.matcher(sheetName).matches()) {
+
+					result.add(sheet);
+					break;
+				}
 			}
 		}
 
