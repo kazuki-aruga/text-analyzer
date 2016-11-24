@@ -28,7 +28,7 @@ public class FormParser {
 	private static final Pattern[] bsSheetNames = { //
 			Pattern.compile("事業の状況"), //
 			Pattern.compile("業績.*概要"), //
-			Pattern.compile("生産.*受注.*の状況"), //
+			Pattern.compile("(生産|仕入).*受注.*の状況"), // 仕入、受注及び販売の状況
 			Pattern.compile("対処すべき課題"), //
 			Pattern.compile("事業.*リスク"), //
 			Pattern.compile("経営上の重要な契約等"), //
@@ -41,7 +41,7 @@ public class FormParser {
 	 */
 	private static final Pattern[] bsSections = { //
 			Pattern.compile("^.*【業績.*概要】$"), //
-			Pattern.compile("^.*【生産.*受注.*の状況】$"), //
+			Pattern.compile("^.*【(生産|仕入).*受注.*の状況】$"), //
 			Pattern.compile("^.*【対処すべき課題】$"), //
 			Pattern.compile("^.*【事業.*リスク】$"), //
 			Pattern.compile("^.*【経営上の重要な契約等】$"), //

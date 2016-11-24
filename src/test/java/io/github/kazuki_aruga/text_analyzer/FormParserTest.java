@@ -54,8 +54,9 @@ public class FormParserTest {
 	@Test
 	public void testMatcher() {
 
-		Pattern pattern = Pattern.compile("生産.*受注(及び|および)販売の状況");
+		Pattern pattern = Pattern.compile("(生産|仕入).*受注.*販売の状況");
 		Assert.assertTrue(pattern.matcher("生産、受注および販売の状況").matches());
+		Assert.assertTrue(pattern.matcher("仕入、受注及び販売の状況").matches());
 
 		pattern = Pattern.compile("^.*【財政状態.*の分析】$");
 		Assert.assertTrue(pattern.matcher("2. 【財政状態の状況の分析】").matches());
