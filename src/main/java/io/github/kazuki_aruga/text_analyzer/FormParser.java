@@ -4,6 +4,7 @@
 package io.github.kazuki_aruga.text_analyzer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -24,27 +25,41 @@ public class FormParser {
 	/**
 	 * 事業の状況を記載したシート名。
 	 */
-	private static Pattern[] bsSheetNames = { //
+	private static final Pattern[] bsSheetNames = { //
 			Pattern.compile("事業の状況"), //
-			Pattern.compile("業績等の概要"), //
-			Pattern.compile("生産、受注及び販売の状況"), //
+			Pattern.compile("業績.*概要"), //
+			Pattern.compile("生産.*受注.*の状況"), //
 			Pattern.compile("対処すべき課題"), //
-			Pattern.compile("事業等のリスク"), //
+			Pattern.compile("事業.*リスク"), //
 			Pattern.compile("経営上の重要な契約等"), //
 			Pattern.compile("研究開発活動"), //
+			Pattern.compile("財政状態.*の分析"), //
 	};
 
 	/**
 	 * 事業の状況のセクション。
 	 */
-	private static Pattern[] bsSections = new Pattern[] { //
-			Pattern.compile("^.*【業績等の概要】$"), //
-			Pattern.compile("^.*【生産.*受注[及び|および]販売の状況】$"), //
+	private static final Pattern[] bsSections = { //
+			Pattern.compile("^.*【業績.*概要】$"), //
+			Pattern.compile("^.*【生産.*受注.*の状況】$"), //
 			Pattern.compile("^.*【対処すべき課題】$"), //
-			Pattern.compile("^.*【事業等のリスク】$"), //
+			Pattern.compile("^.*【事業.*リスク】$"), //
 			Pattern.compile("^.*【経営上の重要な契約等】$"), //
 			Pattern.compile("^.*【研究開発活動】$"), //
-			Pattern.compile("^.*【財政状態.*経営成績[及び|および]キャッシュ.*フローの状況の分析】$"), //
+			Pattern.compile("^.*【財政状態.*の分析】$"), //
+	};
+
+	/**
+	 * セクション名称。
+	 */
+	private static final String[] sectionNames = { //
+			"1.業績等の概要", //
+			"2.生産、受注及び販売の状況", //
+			"3.対処すべき課題", //
+			"4.事業等のリスク", //
+			"5.経営上の重要な契約等", //
+			"6.研究開発活動", //
+			"7.財政状態、経営成績及びキャッシュ・フローの状況の分析", //
 	};
 
 	/**
@@ -123,6 +138,9 @@ public class FormParser {
 		// 「事業の状況」シートの内容を解析する
 		int section = -1; // セクションのインデックス
 
+		final boolean[] hasSection = new boolean[bsSections.length];
+		Arrays.fill(hasSection, false);
+
 		final List<String> issues = new ArrayList<>(); // 対処すべき課題
 		final List<String> rd = new ArrayList<>(); // 研究開発活動
 
@@ -142,6 +160,7 @@ public class FormParser {
 						if (-1 < sectionIndex) {
 
 							section = sectionIndex;
+							hasSection[sectionIndex] = true;
 							// セクションの行は含めない
 							continue;
 						}
@@ -164,14 +183,7 @@ public class FormParser {
 			}
 		}
 
-		if (issues.isEmpty()) {
-
-			log.error("３【対処すべき課題】が見つかりません。");
-		}
-		if (rd.isEmpty()) {
-
-			log.error("６【研究開発活動】が見つかりません。");
-		}
+		logSection(hasSection);
 
 		// 結果を生成して返却する
 		final BusinessSituation bs = new BusinessSituation();
@@ -180,6 +192,18 @@ public class FormParser {
 		bs.setRd(rd);
 
 		return bs;
+
+	}
+
+	private static void logSection(boolean[] hasSection) {
+
+		for (int i = 0; i < hasSection.length; i++) {
+
+			if (!hasSection[i]) {
+
+				log.warn(sectionNames[i] + "が見つかりませんでした。");
+			}
+		}
 
 	}
 

@@ -2,6 +2,7 @@ package io.github.kazuki_aruga.text_analyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -48,6 +49,16 @@ public class FormParserTest {
 
 			Assert.assertNotNull(FormParser.getCompanyName(workbook));
 		}
+	}
+
+	@Test
+	public void testMatcher() {
+
+		Pattern pattern = Pattern.compile("生産.*受注(及び|および)販売の状況");
+		Assert.assertTrue(pattern.matcher("生産、受注および販売の状況").matches());
+
+		pattern = Pattern.compile("^.*【財政状態.*の分析】$");
+		Assert.assertTrue(pattern.matcher("2. 【財政状態の状況の分析】").matches());
 	}
 
 }
