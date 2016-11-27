@@ -20,7 +20,13 @@ CREATE TABLE `vocab` (
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='単語辞書マスター';
 CREATE TABLE `report` (
   `comp_code` varchar(4) NOT NULL COMMENT '企業コード',
-  `year` year(4) NOT NULL COMMENT '年度',
+  `year` year(4) NOT NULL COMMENT '会計年度',
+  `sales` int(11) DEFAULT NULL COMMENT '売上高',
+  `asset` int(11) DEFAULT NULL COMMENT '資産合計',
+  `debt` int(11) DEFAULT NULL COMMENT '負債合計',
+  `ebitda` int(11) DEFAULT NULL COMMENT 'EBITDA',
+  `rd` int(11) DEFAULT NULL COMMENT '研究開発費',
+  `ni` int(11) DEFAULT NULL COMMENT '当期純利益',
   PRIMARY KEY (`comp_code`,`year`),
   CONSTRAINT `fk_comp` FOREIGN KEY (`comp_code`) REFERENCES `comp` (`comp_code`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='有価証券報告書データ';
