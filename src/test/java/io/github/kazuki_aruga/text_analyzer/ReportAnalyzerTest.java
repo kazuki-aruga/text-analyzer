@@ -37,6 +37,7 @@ public class ReportAnalyzerTest {
 	public static void afterClass() {
 
 		ma.close();
+		ma = null;
 	}
 
 	@Test
@@ -48,7 +49,7 @@ public class ReportAnalyzerTest {
 		Assert.assertNotNull(report.getCompany());
 		Assert.assertEquals("4699", report.getCompany().getCompCode());
 		Assert.assertEquals("ウチダエスコ株式会社", report.getCompany().getCompName());
-		Assert.assertEquals(2015, report.getYear());
+		Assert.assertEquals(2014, report.getYear());
 		Assert.assertNotNull(report.getIssues());
 		Assert.assertFalse(report.getIssues().isEmpty());
 		Assert.assertNotNull(report.getRd());
@@ -64,11 +65,20 @@ public class ReportAnalyzerTest {
 		Assert.assertNotNull(report.getCompany());
 		Assert.assertEquals("4709", report.getCompany().getCompCode());
 		Assert.assertEquals("株式会社インフォメーション・ディベロプメント", report.getCompany().getCompName());
-		Assert.assertEquals(2002, report.getYear());
+		Assert.assertEquals(2001, report.getYear());
 		Assert.assertNotNull(report.getIssues());
 		Assert.assertFalse(report.getIssues().isEmpty());
 		Assert.assertNotNull(report.getRd());
 		Assert.assertFalse(report.getRd().isEmpty());
+	}
+
+	@Test
+	public void testGetYear() {
+
+		Assert.assertEquals(2001, ReportAnalyzer.getFiscalYear("平成13年4月1日"));
+		Assert.assertEquals(2001, ReportAnalyzer.getFiscalYear("平成13年12月31日"));
+		Assert.assertEquals(2015, ReportAnalyzer.getFiscalYear("平成27年10月31日"));
+		Assert.assertEquals(2015, ReportAnalyzer.getFiscalYear("平成27年12月31日"));
 	}
 
 }

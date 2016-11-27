@@ -23,8 +23,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
@@ -35,8 +33,6 @@ import io.github.kazuki_aruga.text_analyzer.entity.Report;
  * 有価証券報告書の「事業の状況」を形態素解析し、データベースに登録する。
  */
 public class Main {
-
-	private static final Log log = LogFactory.getLog(Main.class);
 
 	private final MorphologicalAnalyzer ma;
 

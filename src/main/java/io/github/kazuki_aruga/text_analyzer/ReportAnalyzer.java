@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +42,11 @@ public class ReportAnalyzer {
 	 * 和暦のフォーマット。
 	 */
 	private static final DateFormat japaneseFormat = new SimpleDateFormat("GGGGy年M月d日", new Locale("ja", "JP", "JP"));
+
+	/**
+	 * カレンダー。
+	 */
+	private static final Calendar cal = Calendar.getInstance();
 
 	/**
 	 * 形態素解析器。
@@ -92,7 +97,7 @@ public class ReportAnalyzer {
 			return null;
 		}
 
-		final int year = getYear(matcher.group(2));
+		final int year = getFiscalYear(matcher.group(1));
 		if (year == 0) {
 
 			log.info("年度が特定できません。");
@@ -121,18 +126,19 @@ public class ReportAnalyzer {
 	}
 
 	/**
-	 * 和暦から西暦の年を取得する。
+	 * 和暦から会計年度を取得する。
 	 * 
 	 * @param gdate
 	 *            和暦。
 	 * @return 西暦の年。
 	 */
-	private static int getYear(String gdate) {
+	static int getFiscalYear(String gdate) {
 
 		try {
 
-			final Date date = japaneseFormat.parse(gdate);
-			return date.getYear() + 1900;
+			cal.setTime(japaneseFormat.parse(gdate));
+
+			return cal.get(Calendar.YEAR);
 
 		} catch (ParseException e) {
 
