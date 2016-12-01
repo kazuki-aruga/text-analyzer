@@ -11,16 +11,20 @@ CREATE TABLE `vocab` (
   `pos1` varchar(45) NOT NULL COMMENT '品詞細分類1',
   `pos2` varchar(100) NOT NULL COMMENT '品詞細分類2',
   `pos3` varchar(100) NOT NULL COMMENT '品詞細分類3',
-  `conj` varchar(256) DEFAULT NULL COMMENT '活用形',
-  `type` varchar(100) DEFAULT NULL COMMENT '活用型',
-  `furi` varchar(256) DEFAULT NULL COMMENT '読み',
-  `pronun` varchar(256) DEFAULT NULL COMMENT '発音',
+  `conj` varchar(256) NOT NULL COMMENT '活用形',
+  `type` varchar(100) NOT NULL COMMENT '活用型',
+  `furi` varchar(256) NOT NULL COMMENT '読み',
+  `pronun` varchar(256) NOT NULL COMMENT '発音',
+  `sections` int(11) NOT NULL DEFAULT '0' COMMENT '出現セクション数',
+  `reports` int(11) NOT NULL DEFAULT '0' COMMENT '出現有価証券報告書数',
+  `except` bit(1) NOT NULL DEFAULT b'0' COMMENT '除外するかどうか',
+  `available` bit(1) DEFAULT b'0',
   PRIMARY KEY (`vocab_id`),
   UNIQUE KEY `idx_vocab` (`proto`,`pos`,`pos1`,`pos2`,`pos3`,`conj`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='単語辞書マスター';
+) ENGINE=InnoDB AUTO_INCREMENT=19594 DEFAULT CHARSET=utf8 COMMENT='単語辞書マスター';
 CREATE TABLE `report` (
   `comp_code` varchar(4) NOT NULL COMMENT '企業コード',
-  `year` year(4) NOT NULL COMMENT '会計年度',
+  `year` year(4) NOT NULL COMMENT '年度',
   `sales` int(11) DEFAULT NULL COMMENT '売上高',
   `asset` int(11) DEFAULT NULL COMMENT '資産合計',
   `debt` int(11) DEFAULT NULL COMMENT '負債合計',
