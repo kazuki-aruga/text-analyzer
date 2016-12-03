@@ -31,6 +31,10 @@ CREATE TABLE `report` (
   `ebitda` int(11) DEFAULT NULL COMMENT 'EBITDA',
   `rd` int(11) DEFAULT NULL COMMENT '研究開発費',
   `ni` int(11) DEFAULT NULL COMMENT '当期純利益',
+  `wc_sec1` int(11) NOT NULL DEFAULT '0',
+  `wc_sec2` int(11) NOT NULL DEFAULT '0',
+  `wc_total` int(11) NOT NULL DEFAULT '0',
+  `active` bit(1) NOT NULL DEFAULT b'1',
   PRIMARY KEY (`comp_code`,`year`),
   CONSTRAINT `fk_comp` FOREIGN KEY (`comp_code`) REFERENCES `comp` (`comp_code`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='有価証券報告書データ';
