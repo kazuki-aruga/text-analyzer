@@ -34,6 +34,9 @@ CREATE TABLE `report` (
   `wc_sec1` int(11) NOT NULL DEFAULT '0',
   `wc_sec2` int(11) NOT NULL DEFAULT '0',
   `wc_total` int(11) NOT NULL DEFAULT '0',
+  `vc_sec1` int(11) NOT NULL DEFAULT '0',
+  `vc_sec2` int(11) NOT NULL DEFAULT '0',
+  `vc_total` int(11) NOT NULL DEFAULT '0',
   `active` bit(1) NOT NULL DEFAULT b'1',
   PRIMARY KEY (`comp_code`,`year`),
   CONSTRAINT `fk_comp` FOREIGN KEY (`comp_code`) REFERENCES `comp` (`comp_code`) ON DELETE NO ACTION ON UPDATE NO ACTION
