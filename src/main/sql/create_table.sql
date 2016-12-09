@@ -31,13 +31,13 @@ CREATE TABLE `report` (
   `ebitda` int(11) DEFAULT NULL COMMENT 'EBITDA',
   `rd` int(11) DEFAULT NULL COMMENT '研究開発費',
   `ni` int(11) DEFAULT NULL COMMENT '当期純利益',
-  `wc_sec1` int(11) NOT NULL DEFAULT '0',
-  `wc_sec2` int(11) NOT NULL DEFAULT '0',
-  `wc_total` int(11) NOT NULL DEFAULT '0',
-  `vc_sec1` int(11) NOT NULL DEFAULT '0',
-  `vc_sec2` int(11) NOT NULL DEFAULT '0',
-  `vc_total` int(11) NOT NULL DEFAULT '0',
-  `active` bit(1) NOT NULL DEFAULT b'1',
+  `wc_sec1` int(11) NOT NULL DEFAULT '0' COMMENT '対処すべき課題単語数',
+  `wc_sec2` int(11) NOT NULL DEFAULT '0' COMMENT '研究開発活動単語数',
+  `wc_total` int(11) NOT NULL DEFAULT '0' COMMENT '単語合計',
+  `vc_sec1` int(11) NOT NULL DEFAULT '0' COMMENT '対処すべき課題語彙数',
+  `vc_sec2` int(11) NOT NULL DEFAULT '0' COMMENT '研究開発活動語彙数',
+  `vc_total` int(11) NOT NULL DEFAULT '0' COMMENT '語彙合計',
+  `active` bit(1) NOT NULL DEFAULT b'1' COMMENT '有効な有報かどうか',
   PRIMARY KEY (`comp_code`,`year`),
   CONSTRAINT `fk_comp` FOREIGN KEY (`comp_code`) REFERENCES `comp` (`comp_code`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='有価証券報告書データ';
@@ -53,3 +53,10 @@ CREATE TABLE `report_word` (
   CONSTRAINT `fk_report` FOREIGN KEY (`comp_code`, `year`) REFERENCES `report` (`comp_code`, `year`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_vocab` FOREIGN KEY (`vocab_id`) REFERENCES `vocab` (`vocab_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='有価証券報告書単語データ';
+CREATE TABLE `report_new_vocab` (
+  `comp_code` varchar(4) NOT NULL COMMENT '企業コード',
+  `year` year(4) NOT NULL COMMENT '会計年度',
+  `vocab_id` int(11) NOT NULL COMMENT '語彙ID',
+  `wc` int(11) NOT NULL COMMENT '出現回数',
+  PRIMARY KEY (`comp_code`,`year`,`vocab_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='新出単語';
