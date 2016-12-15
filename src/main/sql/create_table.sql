@@ -35,6 +35,7 @@ CREATE TABLE `report` (
   `wc_sec2` int(11) NOT NULL DEFAULT '0' COMMENT '研究開発活動単語数',
   `wc_total` int(11) NOT NULL DEFAULT '0' COMMENT '単語合計',
   `vc_sec1` int(11) NOT NULL DEFAULT '0' COMMENT '対処すべき課題語彙数',
+  `new_vc_sec1` int(11) NOT NULL DEFAULT '0' COMMENT '新出語彙',
   `vc_sec2` int(11) NOT NULL DEFAULT '0' COMMENT '研究開発活動語彙数',
   `vc_total` int(11) NOT NULL DEFAULT '0' COMMENT '語彙合計',
   `active` bit(1) NOT NULL DEFAULT b'1' COMMENT '有効な有報かどうか',
