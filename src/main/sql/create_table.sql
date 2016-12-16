@@ -49,6 +49,7 @@ CREATE TABLE `report_word` (
   `seq` int(11) NOT NULL COMMENT '順序',
   `surface` varchar(256) NOT NULL COMMENT '表層形',
   `vocab_id` int(11) NOT NULL COMMENT '語彙ID',
+  `first_app` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`comp_code`,`year`,`section`,`seq`),
   KEY `fk_vocab_idx` (`vocab_id`),
   CONSTRAINT `fk_report` FOREIGN KEY (`comp_code`, `year`) REFERENCES `report` (`comp_code`, `year`) ON DELETE NO ACTION ON UPDATE NO ACTION,
